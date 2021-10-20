@@ -1,0 +1,29 @@
+# Node.js with React
+
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+
+pool:
+  name: Default
+
+variables:
+  NUGET_PACKAGES: $(Pipeline.Workspace)/node_modules
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Cache@2
+  inputs:
+    key: 'nuget | "$(Agent.OS)" | **/packages-lock.json'
+    path: '$(NUGET_PACKAGES)'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run build'
